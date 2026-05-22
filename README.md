@@ -1,8 +1,9 @@
 # JTaskboard — App de gestión de tareas
 
-Aplicación web tipo Jira para la gestión de tareas. Permite listar, crear,
-editar, cambiar el estado y eliminar tareas. Consume un backend
-Java/Spring real y está construida con una arquitectura limpia por capas.
+Aplicación web tipo Jira para la gestión de tareas. Permite registrarse,
+iniciar sesión, y listar, crear, editar, cambiar el estado y eliminar
+tareas. Consume un backend Java/Spring real (protegido con JWT) y está
+construida con una arquitectura limpia por capas.
 
 > El idioma del código y de la interfaz es **español**.
 
@@ -33,8 +34,9 @@ Java/Spring real y está construida con una arquitectura limpia por capas.
 | UI | React 19 + TypeScript (modo `strict`) |
 | Componentes visuales | Material UI (MUI) v9 + Emotion |
 | Iconos | `@mui/icons-material` |
-| Enrutado | react-router-dom v7 |
-| HTTP | axios |
+| Enrutado | react-router-dom v7 (con rutas protegidas) |
+| HTTP | axios (interceptores para el token JWT) |
+| Autenticación | JWT (`Bearer`), sesión persistida en `localStorage` |
 | Editor de descripción | `@mdxeditor/editor` (Markdown WYSIWYG) |
 | Pruebas | Vitest + Testing Library + jsdom |
 | Calidad | ESLint (incluye reglas de frontera entre capas) |
@@ -113,6 +115,11 @@ absoluta: `https://jtaskboard.onrender.com/api/v1`.
   30 y 60 segundos** mientras el servicio "despierta". Las siguientes
   responden con normalidad. Si el listado tarda en cargar al abrir la
   app, es esto — no un error.
+- **Hace falta una cuenta:** los endpoints de tareas están protegidos.
+  Al abrir la app por primera vez se redirige a `/login`; usa el enlace
+  *"Crear una cuenta"* para registrarte (el registro inicia sesión
+  automáticamente). El token JWT **expira a los 60 minutos**: cuando una
+  petición recibe `401`, la sesión se cierra y vuelve a `/login`.
 - **Proxy de CORS:** en desarrollo todas las llamadas a `/api` las
   redirige Vite al backend. Por eso es importante mantener
   `VITE_API_URL=/api/v1` en el `.env`.
@@ -145,10 +152,17 @@ domain  ←  data
 | `presentation/` | React: componentes, páginas, hooks, estilos y etiquetas de UI. |
 | `app/` | Raíz de composición: crea las implementaciones y las inyecta. |
 
-**Desacoplamiento:** el dominio define la interfaz `TaskRepository` (el
-puerto); `data/` la implementa (`HttpTaskRepository`); la presentación la
-recibe por React Context (`useRepositories`) y nunca importa `data/`
-directamente. Cambiar el backend implica tocar solo la capa `data/`.
+**Desacoplamiento:** el dominio define las interfaces `TaskRepository` y
+`AuthRepository` (los puertos); `data/` las implementa (`HttpTaskRepository`,
+`HttpAuthRepository`); la presentación las recibe por React Context
+(`useRepositories`) y nunca importa `data/` directamente. Cambiar el
+backend implica tocar solo la capa `data/`.
+
+**Autenticación:** el `httpClient` lleva interceptores que adjuntan el
+token `Bearer` a cada petición protegida y, ante un `401`, limpian la
+sesión y redirigen a `/login`. El estado de sesión vive en presentación
+(`AuthProvider` / `useAuth`), se inicializa desde `localStorage` y las
+rutas privadas se cubren con `ProtectedRoute`.
 
 **Alias de imports:** `@domain/*`, `@data/*`, `@presentation/*`, `@app/*`
 apuntan a `src/{domain,data,presentation,app}/*`.
@@ -164,40 +178,54 @@ apuntan a `src/{domain,data,presentation,app}/*`.
 ```
 src/
 ├── domain/                  Entidades y puertos (TypeScript puro)
-│   └── task/
-│       ├── task.ts          Task, TaskStatus, NewTask, TASK_STATUSES, límites
-│       └── task-repository.ts   Interfaz TaskRepository (el puerto)
+│   ├── task/
+│   │   ├── task.ts          Task, TaskStatus, NewTask, TASK_STATUSES, límites
+│   │   └── task-repository.ts   Interfaz TaskRepository (el puerto)
+│   └── auth/
+│       ├── auth.ts          Credentials, RegisterData, AuthUser, AuthSession, AuthError
+│       └── auth-repository.ts   Interfaz AuthRepository (el puerto)
 │
 ├── data/                    Implementación de los puertos
 │   ├── http/
-│   │   └── http-client.ts   Instancia de axios
-│   └── task/
-│       ├── task.dto.ts      Forma de los datos de la API
-│       ├── task.mapper.ts   Conversión DTO ↔ entidad
-│       └── http-task-repository.ts   HttpTaskRepository
+│   │   ├── http-client.ts   Instancia de axios + interceptores del token JWT
+│   │   └── session-storage.ts   Lectura del token desde localStorage
+│   ├── task/
+│   │   ├── task.dto.ts      Forma de los datos de la API
+│   │   ├── task.mapper.ts   Conversión DTO ↔ entidad
+│   │   └── http-task-repository.ts   HttpTaskRepository
+│   └── auth/
+│       ├── auth.dto.ts · auth.mapper.ts
+│       └── http-auth-repository.ts   HttpAuthRepository
 │
 ├── presentation/            Capa de React
 │   ├── components/          ConfirmDialog, StatusSelect, TaskList, TaskCard,
-│   │                        TaskRow, TaskForm, MarkdownEditor, estados, etc.
-│   ├── pages/               HomePage, CreateTaskPage, EditTaskPage
+│   │                        TaskRow, TaskForm, MarkdownEditor, AppHeader,
+│   │                        ProtectedRoute, ProtectedLayout, AuthCard, etc.
+│   ├── pages/               HomePage, CreateTaskPage, EditTaskPage,
+│   │                        LoginPage, RegisterPage
 │   ├── hooks/               useTasks
-│   ├── labels/              Textos de UI (STATUS_LABELS)
+│   ├── auth/                AuthProvider, useAuth, auth-context, session-store
+│   ├── labels/              Textos de UI (STATUS_LABELS, mensajes de auth)
 │   └── styles/              theme.ts (tema de MUI), index.css
 │
 ├── app/                     Raíz de composición
-│   ├── composition-root.ts  Crea HttpTaskRepository
+│   ├── composition-root.ts  Crea HttpTaskRepository y HttpAuthRepository
 │   ├── repositories-context.ts · repositories.tsx · useRepositories.ts
 │
-└── test/                    Utilidades de prueba (fake del repositorio, setup)
+└── test/                    Utilidades de prueba (fakes de los repositorios, setup)
 ```
 
 ### Rutas
 
-| Ruta | Vista |
-|---|---|
-| `/` | Listado de tareas |
-| `/tasks/new` | Crear tarea |
-| `/tasks/edit` | Editar tarea (recibe la tarea por estado de navegación) |
+| Ruta | Vista | Acceso |
+|---|---|---|
+| `/login` | Inicio de sesión | Pública |
+| `/register` | Registro de cuenta | Pública |
+| `/` | Listado de tareas | Protegida |
+| `/tasks/new` | Crear tarea | Protegida |
+| `/tasks/edit` | Editar tarea (recibe la tarea por estado de navegación) | Protegida |
+
+Las rutas protegidas redirigen a `/login` si no hay sesión activa.
 
 ---
 
@@ -205,6 +233,22 @@ src/
 
 - **URL base:** `https://jtaskboard.onrender.com`
 - **OpenAPI:** `/api-docs` — **Swagger UI:** `/swagger-ui/index.html`
+
+### Autenticación (endpoints públicos)
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `POST` | `/api/v1/auth/register` | Registra un usuario — body `{ firstName, lastName, email, password }` |
+| `POST` | `/api/v1/auth/login` | Inicia sesión — body `{ email, password }` |
+
+Ambos responden `{ accessToken, tokenType: "Bearer", user }`. El registro
+devuelve `409` si el correo ya existe; el login devuelve `401` con
+credenciales inválidas. La contraseña debe tener entre 8 y 72 caracteres.
+
+### Tareas (endpoints protegidos)
+
+Requieren la cabecera `Authorization: Bearer <accessToken>`; sin ella o con
+el token expirado responden `401`. El token caduca a los 60 minutos.
 
 | Método | Endpoint | Descripción |
 |---|---|---|
@@ -219,10 +263,19 @@ src/
 - `status`: `TODO` · `IN_PROGRESS` · `DONE`
 - Límites: `title` ≤ 100 caracteres · `description` ≤ 32767 caracteres
 
+> **CORS en producción:** en desarrollo el proxy de Vite evita problemas de
+> CORS. Al desplegar, el origen del frontend debe añadirse a la variable
+> `CORS_ALLOWED_ORIGINS` del backend.
+
 ---
 
 ## Funcionalidades
 
+- ✅ **Registro e inicio de sesión** — autenticación JWT; el registro
+  inicia sesión automáticamente. Errores claros (correo ya registrado,
+  credenciales incorrectas, validación).
+- ✅ **Rutas protegidas** — las páginas de tareas exigen sesión; al
+  expirar el token (`401`) se cierra la sesión y se vuelve a `/login`.
 - ✅ **Listar tareas** — página principal responsiva (tabla en escritorio,
   tarjetas en móvil).
 - ✅ **Crear tarea** — formulario con editor Markdown para la descripción.
@@ -245,15 +298,18 @@ npm run test:watch  # modo observación
 ```
 
 La arquitectura por puertos facilita las pruebas: los componentes y hooks
-reciben un **doble de prueba** del `TaskRepository` (en `src/test/`) por
-React Context, sin necesidad de mockear la red.
+reciben **dobles de prueba** del `TaskRepository` y del `AuthRepository`
+(en `src/test/`) por React Context, sin necesidad de mockear la red. La
+cobertura de autenticación incluye el *mapper*, `HttpAuthRepository`,
+`useAuth`, `ProtectedRoute` y los formularios de login y registro.
 
 ---
 
 ## Estado del proyecto
 
-**Implementado:** listado responsive, crear, editar, cambiar estado y
-eliminar tareas; UI con Material UI; suite de pruebas unitarias.
+**Implementado:** autenticación JWT (registro, login, logout, rutas
+protegidas); listado responsive, crear, editar, cambiar estado y eliminar
+tareas; UI con Material UI; suite de pruebas unitarias.
 
 **Pendiente:** página con un gráfico de tareas por estado (no incluida en
 esta entrega).
