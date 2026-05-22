@@ -17,4 +17,8 @@ export class HttpTaskRepository implements TaskRepository {
     );
     return toTask(data);
   }
+
+  async delete(id: string): Promise<void> {
+    await httpClient.delete(`/tasks/${id}`);
+  }
 }

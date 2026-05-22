@@ -7,6 +7,7 @@ interface UseTasksResult {
   loading: boolean;
   error: string | null;
   refetch: () => void;
+  deleteTask: (id: string) => Promise<void>;
 }
 
 export function useTasks(): UseTasksResult {
@@ -28,6 +29,17 @@ export function useTasks(): UseTasksResult {
     }
   }, [taskRepository]);
 
+  const deleteTask = useCallback(
+    async (id: string) => {
+      // Borra en el backend y recarga la lista (datos frescos del
+      // servidor). Si el DELETE falla, propaga el error para que la
+      // UI que dispara la accion lo muestre.
+      await taskRepository.delete(id);
+      await fetchTasks();
+    },
+    [taskRepository, fetchTasks],
+  );
+
   useEffect(() => {
     // Carga inicial al montar. `fetchTasks` actualiza estado de forma
     // asincrona (loading/error/datos): es el patron estandar de
@@ -36,5 +48,5 @@ export function useTasks(): UseTasksResult {
     fetchTasks();
   }, [fetchTasks]);
 
-  return { tasks, loading, error, refetch: fetchTasks };
+  return { tasks, loading, error, refetch: fetchTasks, deleteTask };
 }

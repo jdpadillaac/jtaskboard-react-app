@@ -175,9 +175,93 @@
   background: var(--code-bg);
 }
 
+.button--danger {
+  border: 1px solid #d9534f;
+  background: var(--bg);
+  color: #c0392b;
+}
+
+.button--danger:hover:not(:disabled) {
+  background: #d9534f;
+  color: #fff;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.icon-button:hover:not(:disabled) {
+  background: var(--code-bg);
+}
+
+.icon-button--danger:hover:not(:disabled) {
+  border-color: #d9534f;
+  background: #d9534f;
+  color: #fff;
+}
+
+.icon-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 50;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.dialog-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  color: var(--text-h);
+}
+
+.dialog-message {
+  margin: 0 0 1rem;
+  color: var(--text);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
 .back-link {

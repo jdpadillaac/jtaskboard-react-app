@@ -3,9 +3,10 @@ import TaskRow from './TaskRow';
 
 interface TaskListProps {
   tasks: Task[];
+  onDelete: (task: Task) => void;
 }
 
-function TaskList({ tasks }: TaskListProps) {
+function TaskList({ tasks, onDelete }: TaskListProps) {
   return (
     <table className="task-table">
       <thead>
@@ -14,11 +15,12 @@ function TaskList({ tasks }: TaskListProps) {
           <th>Titulo</th>
           <th>Estado</th>
           <th>Creada</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         {tasks.map((task) => (
-          <TaskRow key={task.id} task={task} />
+          <TaskRow key={task.id} task={task} onDelete={onDelete} />
         ))}
       </tbody>
     </table>
