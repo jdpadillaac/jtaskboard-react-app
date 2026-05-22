@@ -1,6 +1,6 @@
 import { useRepositories } from '@app/useRepositories';
 import type { Task, TaskStatus } from '@domain/task/task';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseTasksResult {
   tasks: Task[];
@@ -16,6 +16,11 @@ export function useTasks(): UseTasksResult {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const tasksRef = useRef<Task[]>(tasks);
+  useEffect(() => {
+    tasksRef.current = tasks;
+  }, [tasks]);
 
   const fetchTasks = useCallback(async () => {
     setLoading(true);
@@ -51,7 +56,7 @@ export function useTasks(): UseTasksResult {
 
   const updateTaskStatus = useCallback(
     async (id: string, status: TaskStatus) => {
-      const previous = tasks;
+      const previous = tasksRef.current;
       // Optimista: refleja el cambio antes de que responda el backend.
       setTasks((prev) =>
         prev.map((t) => (t.id === id ? { ...t, status } : t)),
@@ -65,7 +70,7 @@ export function useTasks(): UseTasksResult {
         throw e;            // la pagina lo captura y avisa
       }
     },
-    [tasks, taskRepository],
+    [taskRepository],
   );
 
   return { tasks, loading, error, refetch: fetchTasks, deleteTask, updateTaskStatus };

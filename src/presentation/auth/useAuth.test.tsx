@@ -48,6 +48,18 @@ describe('useAuth', () => {
         expect(result.current.user?.email).toBe('ada@example.com');
     });
 
+    it('descarta una sesion vencida guardada en localStorage', () => {
+        localStorage.setItem(
+            SESSION_KEY,
+            JSON.stringify(makeAuthSession({ expiresAt: Date.now() - 1000 })),
+        );
+        const { result } = renderHook(() => useAuth(), {
+            wrapper: makeWrapper(new FakeAuthRepository()),
+        });
+        expect(result.current.isAuthenticated).toBe(false);
+        expect(result.current.user).toBeNull();
+    });
+
     it('login autentica al usuario y persiste la sesion', async () => {
         const { result } = renderHook(() => useAuth(), {
             wrapper: makeWrapper(new FakeAuthRepository()),

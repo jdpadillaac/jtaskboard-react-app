@@ -15,7 +15,7 @@ import LoadingState from '@presentation/components/LoadingState';
 import TaskDetailDialog from '@presentation/components/TaskDetailDialog';
 import TaskList from '@presentation/components/TaskList';
 import { useTasks } from '@presentation/hooks/useTasks';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
@@ -35,13 +35,6 @@ function HomePage() {
       setStatusError('No se pudo cambiar el estado de la tarea.');
     }
   }
-
-  // Auto-cierre del banner de error de estado a los 4 s.
-  useEffect(() => {
-    if (!statusError) return;
-    const id = setTimeout(() => setStatusError(null), 4000);
-    return () => clearTimeout(id);
-  }, [statusError]);
 
   function closeDialog() {
     setTaskToDelete(null);

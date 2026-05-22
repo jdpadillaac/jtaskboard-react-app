@@ -24,6 +24,7 @@ export function makeAuthSession(
   return {
     accessToken: 'fake-access-token',
     tokenType: 'Bearer',
+    expiresAt: Date.now() + 60 * 60 * 1000,
     user: makeAuthUser(),
     ...overrides,
   };

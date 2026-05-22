@@ -25,7 +25,15 @@ export interface AuthUser {
 export interface AuthSession {
   accessToken: string;
   tokenType: string;
+  expiresAt: number;
   user: AuthUser;
+}
+
+export function isSessionExpired(
+  session: AuthSession,
+  now: number = Date.now(),
+): boolean {
+  return session.expiresAt <= now;
 }
 
 // Limites de validacion que exige el backend.

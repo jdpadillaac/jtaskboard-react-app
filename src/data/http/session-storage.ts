@@ -1,4 +1,4 @@
-import type { AuthSession } from '@domain/auth/auth';
+import { isSessionExpired, type AuthSession } from '@domain/auth/auth';
 
 // Persistencia de la sesion en localStorage.
 //
@@ -12,7 +12,8 @@ export function getStoredSession(): AuthSession | null {
   const raw = localStorage.getItem(SESSION_KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as AuthSession;
+    const session = JSON.parse(raw) as AuthSession;
+    return isSessionExpired(session) ? null : session;
   } catch {
     // JSON corrupto: lo tratamos como ausencia de sesion.
     return null;
