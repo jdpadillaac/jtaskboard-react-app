@@ -19,3 +19,7 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
   IN_PROGRESS: 'En progreso',
   DONE: 'Completada',
 };
+
+/** Limites de los campos, segun el contrato OpenAPI del backend. */
+export const TITLE_MAX_LENGTH = 100;
+export const DESCRIPTION_MAX_LENGTH = 32767;

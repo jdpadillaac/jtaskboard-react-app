@@ -1,27 +1,21 @@
-import { useTasks } from './hooks/useTasks';
-import TaskList from './components/TaskList';
+import { lazy, Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
 import LoadingState from './components/LoadingState';
-import ErrorState from './components/ErrorState';
-import EmptyState from './components/EmptyState';
 import './App.css';
 
+// La pagina de creacion carga el editor Markdown (pesado): se separa en su
+// propio chunk para no afectar el peso inicial del listado.
+const CreateTaskPage = lazy(() => import('./pages/CreateTaskPage'));
+
 function App() {
-  const { tasks, loading, error, refetch } = useTasks();
-
   return (
-    <main className="app">
-      <header className="app-header">
-        <h1>JTaskboard</h1>
-        <p>Listado de tareas</p>
-      </header>
-
-      <section className="app-content">
-        {loading && <LoadingState />}
-        {!loading && error && <ErrorState message={error} onRetry={refetch} />}
-        {!loading && !error && tasks.length === 0 && <EmptyState />}
-        {!loading && !error && tasks.length > 0 && <TaskList tasks={tasks} />}
-      </section>
-    </main>
+    <Suspense fallback={<LoadingState />}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/tasks/new" element={<CreateTaskPage />} />
+      </Routes>
+    </Suspense>
   );
 }
 
