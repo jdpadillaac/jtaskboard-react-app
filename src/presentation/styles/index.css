@@ -19,9 +19,6 @@ code {
   min-width: 0;
 }
 
-/* MDXEditor aplica este className tambien a un contenedor de popups
-   vacio; el :not() evita que ese div reciba el borde y aparezca como
-   una linea gris cruzando la vista. */
 .markdown-editor:not(.mdxeditor-popup-container) {
   border: 1px solid rgba(0, 0, 0, 0.42);
   border-radius: 8px;
