@@ -1,11 +1,12 @@
-import type { Task } from '@domain/task/task';
+import type { Task, TaskStatus } from '@domain/task/task';
 import { Pencil, Trash2 } from 'lucide-react';
-import StatusBadge from './StatusBadge';
+import StatusSelect from './StatusSelect';
 
 interface TaskRowProps {
   task: Task;
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
+  onStatusChange: (task: Task, status: TaskStatus) => void;
 }
 
 function formatDate(iso: string): string {
@@ -16,13 +17,16 @@ function formatDate(iso: string): string {
   });
 }
 
-function TaskRow({ task, onEdit, onDelete }: TaskRowProps) {
+function TaskRow({ task, onEdit, onDelete, onStatusChange }: TaskRowProps) {
   return (
     <tr>
       <td className="task-key">{task.taskKey}</td>
       <td className="task-title">{task.title}</td>
       <td>
-        <StatusBadge status={task.status} />
+        <StatusSelect
+          status={task.status}
+          onChange={(status) => onStatusChange(task, status)}
+        />
       </td>
       <td className="task-date">{formatDate(task.createdAt)}</td>
       <td className="task-actions">

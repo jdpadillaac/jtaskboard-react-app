@@ -347,3 +347,89 @@
 .markdown-editor [contenteditable] {
   min-height: 220px;
 }
+
+/* ---- StatusSelect (popover de estados) ---- */
+.status-select {
+  position: relative;
+  display: inline-block;
+}
+
+.status-select-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.3rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.status-select-trigger:hover:not(:disabled) {
+  border-color: var(--border);
+  background: var(--code-bg);
+}
+
+.status-select-trigger:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.status-menu {
+  /* Se renderiza en un portal sobre <body> con coordenadas calculadas
+     desde el disparador: asi escapa del `overflow: hidden` de la tabla. */
+  position: fixed;
+  z-index: 50;
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.status-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.status-menu-item:hover {
+  background: var(--code-bg);
+}
+
+/* ---- Banner de avisos ---- */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.banner--error {
+  background: #fdecea;
+  border: 1px solid #d9534f;
+  color: #c0392b;
+}
+
+.banner-close {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}

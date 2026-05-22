@@ -1,5 +1,5 @@
 import { httpClient } from '@data/http/http-client';
-import type { NewTask, Task } from '@domain/task/task';
+import type { NewTask, Task, TaskStatus } from '@domain/task/task';
 import type { TaskRepository } from '@domain/task/task-repository';
 import type { TaskResponseDto } from './task.dto';
 import { toCreateRequest, toTask } from './task.mapper';
@@ -22,6 +22,14 @@ export class HttpTaskRepository implements TaskRepository {
     const { data } = await httpClient.put<TaskResponseDto>(
       `/tasks/${id}`,
       toCreateRequest(task),
+    );
+    return toTask(data);
+  }
+
+  async updateStatus(id: string, status: TaskStatus): Promise<Task> {
+    const { data } = await httpClient.patch<TaskResponseDto>(
+      `/tasks/${id}/status`,
+      { status },
     );
     return toTask(data);
   }
