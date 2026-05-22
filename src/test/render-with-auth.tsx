@@ -1,32 +1,32 @@
 import { RepositoriesContext } from '@app/repositories-context';
 import type { AuthRepository } from '@domain/auth/auth-repository';
-import type { TaskRepository } from '@domain/task/task-repository';
+import { AuthProvider } from '@presentation/auth/AuthProvider';
 import { render } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { FakeAuthRepository } from './fake-auth-repository';
+import { FakeTaskRepository } from './fake-task-repository';
 
-interface RenderOptions {
+interface RenderAuthOptions {
     initialEntries?: string[];
-    // El authRepository es opcional: las pruebas centradas en tareas no
-    // lo necesitan y se rellena con un doble por defecto.
     authRepository?: AuthRepository;
 }
 
-export function renderWithRepo(
+// Monta el arbol de proveedores que necesita una pantalla autenticada:
+// router + repositorios + AuthProvider.
+export function renderWithAuth(
     ui: ReactNode,
-    repo: TaskRepository,
-    { initialEntries = ['/'], authRepository }: RenderOptions = {},
+    { initialEntries = ['/'], authRepository }: RenderAuthOptions = {},
 ) {
     return render(
         <MemoryRouter initialEntries={initialEntries}>
             <RepositoriesContext.Provider
                 value={{
-                    taskRepository: repo,
+                    taskRepository: new FakeTaskRepository(),
                     authRepository: authRepository ?? new FakeAuthRepository(),
                 }}
             >
-                {ui}
+                <AuthProvider>{ui}</AuthProvider>
             </RepositoriesContext.Provider>
         </MemoryRouter>,
     );

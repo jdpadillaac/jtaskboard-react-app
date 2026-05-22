@@ -1,4 +1,5 @@
 import { RepositoriesProvider } from '@app/repositories'
+import { AuthProvider } from '@presentation/auth/AuthProvider'
 import '@presentation/styles/index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -9,7 +10,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <RepositoriesProvider>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </RepositoriesProvider>
     </BrowserRouter>
   </StrictMode>,

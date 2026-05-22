@@ -3,13 +3,16 @@ import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { act } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { FakeAuthRepository } from '../../test/fake-auth-repository';
 import { FakeTaskRepository, makeTask } from '../../test/fake-task-repository';
 import { useTasks } from './useTasks';
 
 function makeWrapper(repo: FakeTaskRepository) {
     return function Wrapper({ children }: { children: ReactNode }) {
         return (
-            <RepositoriesContext.Provider value={{ taskRepository: repo }}>
+            <RepositoriesContext.Provider
+                value={{ taskRepository: repo, authRepository: new FakeAuthRepository() }}
+            >
                 {children}
             </RepositoriesContext.Provider>
         );

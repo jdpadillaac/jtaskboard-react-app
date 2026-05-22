@@ -1,7 +1,10 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import LoadingState from '@presentation/components/LoadingState';
+import ProtectedLayout from '@presentation/components/ProtectedLayout';
 import HomePage from '@presentation/pages/HomePage';
+import LoginPage from '@presentation/pages/LoginPage';
+import RegisterPage from '@presentation/pages/RegisterPage';
 import { theme } from '@presentation/styles/theme';
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
@@ -17,9 +20,16 @@ function App() {
       <CssBaseline />
       <Suspense fallback={<LoadingState />}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/tasks/new" element={<CreateTaskPage />} />
-          <Route path="/tasks/edit" element={<EditTaskPage />} />
+          {/* Rutas publicas */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Rutas protegidas: ProtectedLayout aplica la guarda + header */}
+          <Route element={<ProtectedLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/tasks/new" element={<CreateTaskPage />} />
+            <Route path="/tasks/edit" element={<EditTaskPage />} />
+          </Route>
         </Routes>
       </Suspense>
     </ThemeProvider>
