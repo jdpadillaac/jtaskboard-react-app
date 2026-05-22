@@ -1,5 +1,10 @@
 import type { Task, TaskStatus } from '@domain/task/task';
-import { Pencil, Trash2 } from 'lucide-react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
 import StatusSelect from './StatusSelect';
 
 interface TaskRowProps {
@@ -19,37 +24,44 @@ function formatDate(iso: string): string {
 
 function TaskRow({ task, onEdit, onDelete, onStatusChange }: TaskRowProps) {
   return (
-    <tr>
-      <td className="task-key">{task.taskKey}</td>
-      <td className="task-title">{task.title}</td>
-      <td>
+    <TableRow hover>
+      <TableCell>
+        <Typography variant="body2" color="primary" sx={{ fontFamily: 'monospace' }}>
+          {task.taskKey}
+        </Typography>
+      </TableCell>
+      <TableCell>{task.title}</TableCell>
+      <TableCell>
         <StatusSelect
           status={task.status}
           onChange={(status) => onStatusChange(task, status)}
         />
-      </td>
-      <td className="task-date">{formatDate(task.createdAt)}</td>
-      <td className="task-actions">
-        <button
-          type="button"
-          className="icon-button"
+      </TableCell>
+      <TableCell>
+        <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+          {formatDate(task.createdAt)}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          size="small"
           onClick={() => onEdit(task)}
           aria-label="Editar tarea"
           title="Editar tarea"
         >
-          <Pencil size={16} aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          className="icon-button icon-button--danger"
+          <EditIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          color="error"
           onClick={() => onDelete(task)}
           aria-label="Eliminar tarea"
           title="Eliminar tarea"
         >
-          <Trash2 size={16} aria-hidden="true" />
-        </button>
-      </td>
-    </tr>
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </TableCell>
+    </TableRow>
   );
 }
 

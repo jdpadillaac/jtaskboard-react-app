@@ -3,6 +3,13 @@ import {
   TITLE_MAX_LENGTH,
   type NewTask,
 } from '@domain/task/task';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormHelperText from '@mui/material/FormHelperText';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useState, type FormEvent } from 'react';
 import MarkdownEditor from './MarkdownEditor';
 
@@ -40,58 +47,61 @@ function TaskForm({
   }
 
   return (
-    <form className="task-form" onSubmit={handleSubmit} noValidate>
-      <div className="field">
-        <label htmlFor="task-title">Titulo</label>
-        <input
-          id="task-title"
-          type="text"
-          value={title}
-          maxLength={TITLE_MAX_LENGTH}
-          placeholder="Titulo de la tarea"
-          onChange={(e) => setTitle(e.target.value)}
-          disabled={submitting}
-        />
-        <span className="field-hint">
-          {title.length}/{TITLE_MAX_LENGTH}
-        </span>
-      </div>
+    <Box component="form" onSubmit={handleSubmit} noValidate>
+      <Stack spacing={3}>
+        <Box>
+          <TextField
+            id="task-title"
+            label="Titulo"
+            fullWidth
+            value={title}
+            slotProps={{ htmlInput: { maxLength: TITLE_MAX_LENGTH } }}
+            placeholder="Titulo de la tarea"
+            onChange={(e) => setTitle(e.target.value)}
+            disabled={submitting}
+            error={titleTooLong}
+            helperText={`${title.length}/${TITLE_MAX_LENGTH}`}
+          />
+        </Box>
 
-      <div className="field">
-        <label>Descripcion</label>
-        <MarkdownEditor
-          initialValue={initialDescription}
-          onChange={setDescription}
-          readOnly={submitting}
-        />
-        {descriptionTooLong && (
-          <span className="field-error">
-            La descripcion supera el maximo de {DESCRIPTION_MAX_LENGTH}{' '}
-            caracteres.
-          </span>
-        )}
-      </div>
+        <Box>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+            Descripcion
+          </Typography>
+          <MarkdownEditor
+            initialValue={initialDescription}
+            onChange={setDescription}
+            readOnly={submitting}
+          />
+          {descriptionTooLong && (
+            <FormHelperText error>
+              La descripcion supera el maximo de {DESCRIPTION_MAX_LENGTH} caracteres.
+            </FormHelperText>
+          )}
+        </Box>
 
-      {error && <p className="form-error" role="alert">{error}</p>}
+        {error && <Alert severity="error" role="alert">{error}</Alert>}
 
-      <div className="form-actions">
-        <button
-          type="button"
-          className="button button--ghost"
-          onClick={onCancel}
-          disabled={submitting}
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          className="button button--primary"
-          disabled={!isValid || submitting}
-        >
-          {submitting ? 'Guardando...' : submitLabel}
-        </button>
-      </div>
-    </form>
+        <Stack direction="row" spacing={1} sx={{ justifyContent: 'flex-end' }}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="inherit"
+            onClick={onCancel}
+            disabled={submitting}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={!isValid || submitting}
+          >
+            {submitting ? 'Guardando...' : submitLabel}
+          </Button>
+        </Stack>
+      </Stack>
+    </Box>
   );
 }
 

@@ -1,4 +1,13 @@
 import type { Task, TaskStatus } from '@domain/task/task';
+import CloseIcon from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Snackbar from '@mui/material/Snackbar';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import ConfirmDialog from '@presentation/components/ConfirmDialog';
 import EmptyState from '@presentation/components/EmptyState';
 import ErrorState from '@presentation/components/ErrorState';
@@ -6,7 +15,7 @@ import LoadingState from '@presentation/components/LoadingState';
 import TaskList from '@presentation/components/TaskList';
 import { useTasks } from '@presentation/hooks/useTasks';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -52,45 +61,52 @@ function HomePage() {
   }
 
   return (
-    <main className="app">
-      <header className="app-header">
-        <div>
-          <h1>JTaskboard</h1>
-          <p>Listado de tareas</p>
-        </div>
-        <Link to="/tasks/new" className="button button--primary">
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
+            JTaskboard
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Listado de tareas
+          </Typography>
+        </Box>
+        <Button variant="contained" onClick={() => navigate('/tasks/new')}>
           + Crear tarea
-        </Link>
-      </header>
+        </Button>
+      </Stack>
 
-      <section className="app-content">
+      <Box>
         {loading && <LoadingState />}
         {!loading && error && <ErrorState message={error} onRetry={refetch} />}
         {!loading && !error && tasks.length === 0 && <EmptyState />}
         {!loading && !error && tasks.length > 0 && (
-          <>
-            {statusError && (
-              <div className="banner banner--error" role="alert">
-                {statusError}
-                <button
-                  type="button"
-                  className="banner-close"
-                  onClick={() => setStatusError(null)}
-                  aria-label="Cerrar aviso"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-            <TaskList
-              tasks={tasks}
-              onEdit={(task) => navigate('/tasks/edit', { state: { task } })}
-              onDelete={setTaskToDelete}
-              onStatusChange={handleStatusChange}
-            />
-          </>
+          <TaskList
+            tasks={tasks}
+            onEdit={(task) => navigate('/tasks/edit', { state: { task } })}
+            onDelete={setTaskToDelete}
+            onStatusChange={handleStatusChange}
+          />
         )}
-      </section>
+      </Box>
+
+      <Snackbar
+        open={Boolean(statusError)}
+        autoHideDuration={4000}
+        onClose={() => setStatusError(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity="error"
+          action={
+            <IconButton size="small" color="inherit" onClick={() => setStatusError(null)} aria-label="Cerrar aviso">
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        >
+          {statusError}
+        </Alert>
+      </Snackbar>
 
       {taskToDelete && (
         <ConfirmDialog
@@ -104,7 +120,7 @@ function HomePage() {
           error={deleteError}
         />
       )}
-    </main>
+    </Container>
   );
 }
 

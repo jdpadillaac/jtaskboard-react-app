@@ -1,8 +1,14 @@
 import { useRepositories } from '@app/useRepositories';
 import type { NewTask, Task } from '@domain/task/task';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import TaskForm from '@presentation/components/TaskForm';
 import { useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 
 function EditTaskPage() {
     const navigate = useNavigate();
@@ -31,31 +37,34 @@ function EditTaskPage() {
     }
 
     return (
-        <main className="app">
-            <header className="app-header">
-                <div>
-                    <h1>Editar tarea</h1>
-                    <p>
-                        <Link to="/" className="back-link">
-                            &larr; Volver al listado
-                        </Link>
-                    </p>
-                </div>
-                <span className="task-key">{resolvedTask.taskKey}</span>
-            </header>
-
-            <section className="app-content">
-                <TaskForm
-                    initialTitle={resolvedTask.title}
-                    initialDescription={resolvedTask.description}
-                    submitLabel="Guardar cambios"
-                    submitting={submitting}
-                    error={error}
-                    onSubmit={handleSubmit}
-                    onCancel={() => navigate('/')}
+        <Container maxWidth="md" sx={{ py: 4 }}>
+            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+                <Box>
+                    <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
+                        Editar tarea
+                    </Typography>
+                    <Link component={RouterLink} to="/" underline="hover" color="text.secondary" variant="body2">
+                        &larr; Volver al listado
+                    </Link>
+                </Box>
+                <Chip
+                    label={resolvedTask.taskKey}
+                    variant="outlined"
+                    color="primary"
+                    sx={{ fontFamily: 'monospace', fontWeight: 600 }}
                 />
-            </section>
-        </main>
+            </Stack>
+
+            <TaskForm
+                initialTitle={resolvedTask.title}
+                initialDescription={resolvedTask.description}
+                submitLabel="Guardar cambios"
+                submitting={submitting}
+                error={error}
+                onSubmit={handleSubmit}
+                onCancel={() => navigate('/')}
+            />
+        </Container>
     );
 }
 

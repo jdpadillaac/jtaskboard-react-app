@@ -1,7 +1,9 @@
 import { TASK_STATUSES, type TaskStatus } from '@domain/task/task';
-import { ChevronDown } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Box from '@mui/material/Box';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useState } from 'react';
 import StatusBadge from './StatusBadge';
 
 interface StatusSelectProps {
@@ -10,106 +12,60 @@ interface StatusSelectProps {
   disabled?: boolean;
 }
 
-interface MenuPos {
-  top: number;
-  left: number;
-}
-
 function StatusSelect({ status, onChange, disabled = false }: StatusSelectProps) {
-  const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState<MenuPos | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
-  // Calcula la posicion del menu a partir del disparador. El menu se
-  // renderiza en un portal sobre <body>, fuera de la tabla, para que el
-  // `overflow: hidden` de `.task-table` no lo recorte. Si no cabe debajo
-  // (filas al final de la pantalla), se abre hacia arriba.
-  useLayoutEffect(() => {
-    if (!open || !triggerRef.current) return;
-    const r = triggerRef.current.getBoundingClientRect();
-    const menuH = menuRef.current?.offsetHeight ?? 0;
-    const spaceBelow = window.innerHeight - r.bottom;
-    const top = spaceBelow < menuH + 8 ? r.top - menuH - 4 : r.bottom + 4;
-    setPos({ top, left: r.left });
-  }, [open]);
+  function handleOpen(e: React.MouseEvent<HTMLElement>) {
+    setAnchorEl(e.currentTarget);
+  }
 
-  useEffect(() => {
-    if (!open) return;
-    function onDocClick(e: MouseEvent) {
-      const t = e.target as Node;
-      // El menu vive en un portal: hay que comprobar ambos refs.
-      if (!triggerRef.current?.contains(t) && !menuRef.current?.contains(t)) {
-        setOpen(false);
-      }
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
-    }
-    // Con position: fixed, al hacer scroll/resize la posicion quedaria
-    // desfasada; lo mas simple y correcto es cerrar el menu.
-    function close() {
-      setOpen(false);
-    }
-    document.addEventListener('mousedown', onDocClick);
-    document.addEventListener('keydown', onKey);
-    window.addEventListener('scroll', close, true);
-    window.addEventListener('resize', close);
-    return () => {
-      document.removeEventListener('mousedown', onDocClick);
-      document.removeEventListener('keydown', onKey);
-      window.removeEventListener('scroll', close, true);
-      window.removeEventListener('resize', close);
-    };
-  }, [open]);
+  function handleClose() {
+    setAnchorEl(null);
+  }
 
   function select(next: TaskStatus) {
-    setOpen(false);
-    if (next !== status) onChange(next); // mismo estado -> no-op
+    handleClose();
+    if (next !== status) onChange(next);
   }
 
   return (
-    <div className="status-select">
-      <button
-        ref={triggerRef}
+    <>
+      <Box
+        component="button"
         type="button"
-        className="status-select-trigger"
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleOpen}
         disabled={disabled}
         aria-haspopup="menu"
         aria-expanded={open}
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 0.5,
+          background: 'none',
+          border: 'none',
+          cursor: disabled ? 'default' : 'pointer',
+          padding: 0,
+        }}
       >
         <StatusBadge status={status} />
-        <ChevronDown size={14} aria-hidden="true" />
-      </button>
+        <KeyboardArrowDownIcon fontSize="small" aria-hidden="true" />
+      </Box>
 
-      {open &&
-        createPortal(
-          <ul
-            ref={menuRef}
-            className="status-menu"
-            role="menu"
-            // Mientras no se ha medido la posicion, se mantiene fuera de
-            // pantalla para evitar un parpadeo en la esquina.
-            style={{ top: pos?.top ?? -9999, left: pos?.left ?? -9999 }}
-          >
-            {TASK_STATUSES.map((s) => (
-              <li key={s}>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="status-menu-item"
-                  onClick={() => select(s)}
-                >
-                  <StatusBadge status={s} />
-                  {s === status && <span aria-hidden="true">✓</span>}
-                </button>
-              </li>
-            ))}
-          </ul>,
-          document.body,
-        )}
-    </div>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      >
+        {TASK_STATUSES.map((s) => (
+          <MenuItem key={s} onClick={() => select(s)} selected={s === status}>
+            <StatusBadge status={s} />
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
   );
 }
 

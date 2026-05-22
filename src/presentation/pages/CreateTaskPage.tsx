@@ -1,8 +1,12 @@
 import { useRepositories } from '@app/useRepositories';
 import type { NewTask } from '@domain/task/task';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import TaskForm from '@presentation/components/TaskForm';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 function CreateTaskPage() {
   const navigate = useNavigate();
@@ -23,28 +27,24 @@ function CreateTaskPage() {
   }
 
   return (
-    <main className="app">
-      <header className="app-header">
-        <div>
-          <h1>Crear tarea</h1>
-          <p>
-            <Link to="/" className="back-link">
-              &larr; Volver al listado
-            </Link>
-          </p>
-        </div>
-      </header>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
+          Crear tarea
+        </Typography>
+        <Link component={RouterLink} to="/" underline="hover" color="text.secondary" variant="body2">
+          &larr; Volver al listado
+        </Link>
+      </Box>
 
-      <section className="app-content">
-        <TaskForm
-          submitLabel="Crear tarea"
-          submitting={submitting}
-          error={error}
-          onSubmit={handleSubmit}
-          onCancel={() => navigate('/')}
-        />
-      </section>
-    </main>
+      <TaskForm
+        submitLabel="Crear tarea"
+        submitting={submitting}
+        error={error}
+        onSubmit={handleSubmit}
+        onCancel={() => navigate('/')}
+      />
+    </Container>
   );
 }
 

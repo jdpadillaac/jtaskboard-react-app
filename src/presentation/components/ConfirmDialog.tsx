@@ -1,4 +1,10 @@
-import { useEffect, useRef } from 'react';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 interface ConfirmDialogProps {
   title: string;
@@ -11,8 +17,6 @@ interface ConfirmDialogProps {
   error?: string | null;
 }
 
-// Modal de confirmacion generico. Accesible: role=dialog, foco inicial
-// en el boton de cancelar, Esc para cerrar, click en el fondo cancela.
 function ConfirmDialog({
   title,
   message,
@@ -23,60 +27,22 @@ function ConfirmDialog({
   loading = false,
   error = null,
 }: ConfirmDialogProps) {
-  const cancelRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    cancelRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape' && !loading) onCancel();
-    }
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [loading, onCancel]);
-
   return (
-    <div
-      className="dialog-overlay"
-      onClick={() => {
-        if (!loading) onCancel();
-      }}
-    >
-      <div
-        className="dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="dialog-title"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 id="dialog-title" className="dialog-title">
-          {title}
-        </h2>
-        <p className="dialog-message">{message}</p>
-        {error && <p className="form-error">{error}</p>}
-        <div className="dialog-actions">
-          <button
-            ref={cancelRef}
-            type="button"
-            className="button button--ghost"
-            onClick={onCancel}
-            disabled={loading}
-          >
-            {cancelLabel}
-          </button>
-          <button
-            type="button"
-            className="button button--danger"
-            onClick={onConfirm}
-            disabled={loading}
-          >
-            {loading ? 'Eliminando...' : confirmLabel}
-          </button>
-        </div>
-      </div>
-    </div>
+    <Dialog open onClose={() => { if (!loading) onCancel(); }} aria-labelledby="dialog-title">
+      <DialogTitle id="dialog-title">{title}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{message}</DialogContentText>
+        {error && <Alert severity="error" sx={{ mt: 1 }}>{error}</Alert>}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onCancel} disabled={loading} color="inherit">
+          {cancelLabel}
+        </Button>
+        <Button onClick={onConfirm} disabled={loading} color="error" variant="contained">
+          {loading ? 'Eliminando...' : confirmLabel}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 

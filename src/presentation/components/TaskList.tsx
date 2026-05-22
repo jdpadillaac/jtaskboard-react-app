@@ -1,7 +1,12 @@
-import type { Task } from '@domain/task/task';
+import type { Task, TaskStatus } from '@domain/task/task';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import TaskRow from './TaskRow';
-
-import type { TaskStatus } from '@domain/task/task';
 
 interface TaskListProps {
   tasks: Task[];
@@ -12,22 +17,24 @@ interface TaskListProps {
 
 function TaskList({ tasks, onEdit, onDelete, onStatusChange }: TaskListProps) {
   return (
-    <table className="task-table">
-      <thead>
-        <tr>
-          <th>Clave</th>
-          <th>Titulo</th>
-          <th>Estado</th>
-          <th>Creada</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {tasks.map((task) => (
-          <TaskRow key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} />
-        ))}
-      </tbody>
-    </table>
+    <TableContainer component={Paper} variant="outlined">
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Clave</TableCell>
+            <TableCell sx={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Titulo</TableCell>
+            <TableCell sx={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Estado</TableCell>
+            <TableCell sx={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Creada</TableCell>
+            <TableCell sx={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Acciones</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tasks.map((task) => (
+            <TaskRow key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
 
