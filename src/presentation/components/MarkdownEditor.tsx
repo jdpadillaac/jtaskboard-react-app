@@ -23,11 +23,6 @@ interface MarkdownEditorProps {
   readOnly?: boolean;
 }
 
-/**
- * Editor Markdown WYSIWYG basado en MDXEditor: el usuario escribe texto ya
- * formateado (titulos, negritas, listas, enlaces) y el componente entrega
- * Markdown via `onChange`.
- */
 function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEditorProps) {
   return (
     <MDXEditor

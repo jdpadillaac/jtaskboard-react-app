@@ -1,11 +1,10 @@
-import type { Task } from '../types/task';
+import type { Task } from '@domain/task/task';
 import TaskRow from './TaskRow';
 
 interface TaskListProps {
   tasks: Task[];
 }
 
-/** Tabla con el listado de tareas. */
 function TaskList({ tasks }: TaskListProps) {
   return (
     <table className="task-table">

@@ -1,6 +1,6 @@
+import { useRepositories } from '@app/useRepositories';
+import type { Task } from '@domain/task/task';
 import { useCallback, useEffect, useState } from 'react';
-import { getTasks } from '../api/tasks';
-import type { Task } from '../types/task';
 
 interface UseTasksResult {
   tasks: Task[];
@@ -9,11 +9,8 @@ interface UseTasksResult {
   refetch: () => void;
 }
 
-/**
- * Hook que carga el listado de tareas desde la API y expone los estados
- * de UI (cargando / error / datos) junto con una funcion `refetch`.
- */
 export function useTasks(): UseTasksResult {
+  const { taskRepository } = useRepositories();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,14 +19,14 @@ export function useTasks(): UseTasksResult {
     setLoading(true);
     setError(null);
     try {
-      const data = await getTasks();
+      const data = await taskRepository.getAll();
       setTasks(data);
     } catch {
       setError('No se pudieron cargar las tareas. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [taskRepository]);
 
   useEffect(() => {
     // Carga inicial al montar. `fetchTasks` actualiza estado de forma

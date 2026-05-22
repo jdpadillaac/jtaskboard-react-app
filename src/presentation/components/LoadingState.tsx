@@ -1,4 +1,3 @@
-/** Indicador mostrado mientras se cargan las tareas. */
 function LoadingState() {
   return (
     <div className="state state--loading" role="status" aria-live="polite">

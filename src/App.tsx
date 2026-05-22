@@ -1,12 +1,12 @@
+import LoadingState from '@presentation/components/LoadingState';
+import HomePage from '@presentation/pages/HomePage';
+import '@presentation/styles/app.css';
 import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import LoadingState from './components/LoadingState';
-import './App.css';
+import { Route, Routes } from 'react-router-dom';
 
 // La pagina de creacion carga el editor Markdown (pesado): se separa en su
 // propio chunk para no afectar el peso inicial del listado.
-const CreateTaskPage = lazy(() => import('./pages/CreateTaskPage'));
+const CreateTaskPage = lazy(() => import('@presentation/pages/CreateTaskPage'));
 
 function App() {
   return (

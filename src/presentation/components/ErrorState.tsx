@@ -3,7 +3,6 @@ interface ErrorStateProps {
   onRetry: () => void;
 }
 
-/** Mensaje de error con opcion de reintentar la carga. */
 function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <div className="state state--error" role="alert">

@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
-import { useTasks } from '../hooks/useTasks';
-import TaskList from '../components/TaskList';
-import LoadingState from '../components/LoadingState';
-import ErrorState from '../components/ErrorState';
-import EmptyState from '../components/EmptyState';
+import { useTasks } from '@presentation/hooks/useTasks';
+import TaskList from '@presentation/components/TaskList';
+import LoadingState from '@presentation/components/LoadingState';
+import ErrorState from '@presentation/components/ErrorState';
+import EmptyState from '@presentation/components/EmptyState';
 
-/** Pagina principal: listado de tareas. */
 function HomePage() {
   const { tasks, loading, error, refetch } = useTasks();
 

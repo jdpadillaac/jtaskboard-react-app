@@ -23,7 +23,6 @@
   color: var(--text);
 }
 
-/* ---- Tabla de tareas ---- */
 .task-table {
   width: 100%;
   border-collapse: collapse;
@@ -73,7 +72,6 @@
   white-space: nowrap;
 }
 
-/* ---- Badge de estado ---- */
 .status-badge {
   display: inline-block;
   padding: 0.2rem 0.6rem;
@@ -98,7 +96,6 @@
   color: #1a7a44;
 }
 
-/* ---- Estados de UI (cargando / error / vacio) ---- */
 .state {
   display: flex;
   flex-direction: column;
@@ -131,7 +128,6 @@
   color: #fff;
 }
 
-/* ---- Spinner ---- */
 .spinner {
   width: 32px;
   height: 32px;
@@ -147,7 +143,6 @@
   }
 }
 
-/* ---- Botones ---- */
 .button {
   display: inline-block;
   padding: 0.55rem 1.1rem;
@@ -194,7 +189,6 @@
   text-decoration: underline;
 }
 
-/* ---- Formulario de tarea ---- */
 .task-form {
   display: flex;
   flex-direction: column;
@@ -244,9 +238,7 @@
   gap: 0.75rem;
 }
 
-/* ---- Editor Markdown (MDXEditor) ---- */
 .markdown-editor {
-  /* Fluido: llena el contenedor pero nunca supera 140 caracteres de ancho. */
   width: 100%;
   max-width: 140ch;
   border: 1px solid var(--border);

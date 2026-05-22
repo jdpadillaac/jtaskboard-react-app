@@ -1,4 +1,3 @@
-/** Mensaje mostrado cuando no existen tareas. */
 function EmptyState() {
   return (
     <div className="state state--empty">

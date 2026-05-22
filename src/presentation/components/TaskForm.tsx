@@ -3,24 +3,19 @@ import MarkdownEditor from './MarkdownEditor';
 import {
   TITLE_MAX_LENGTH,
   DESCRIPTION_MAX_LENGTH,
-} from '../types/task';
-import type { CreateTaskInput } from '../api/tasks';
+  type NewTask,
+} from '@domain/task/task';
 
 interface TaskFormProps {
-  /** Valores iniciales (utiles al reutilizar el form para editar). */
   initialTitle?: string;
   initialDescription?: string;
   submitLabel: string;
   submitting: boolean;
   error: string | null;
-  onSubmit: (input: CreateTaskInput) => void;
+  onSubmit: (input: NewTask) => void;
   onCancel: () => void;
 }
 
-/**
- * Formulario de tarea reutilizable (crear / editar).
- * Titulo como input de texto; descripcion con editor Markdown enriquecido.
- */
 function TaskForm({
   initialTitle = '',
   initialDescription = '',

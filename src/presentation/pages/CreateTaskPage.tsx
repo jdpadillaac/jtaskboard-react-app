@@ -1,20 +1,20 @@
+import { useRepositories } from '@app/useRepositories';
+import type { NewTask } from '@domain/task/task';
+import TaskForm from '@presentation/components/TaskForm';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import TaskForm from '../components/TaskForm';
-import { createTask, type CreateTaskInput } from '../api/tasks';
 
-/** Pagina de creacion de una tarea. */
 function CreateTaskPage() {
   const navigate = useNavigate();
+  const { taskRepository } = useRepositories();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(input: CreateTaskInput) {
+  async function handleSubmit(input: NewTask) {
     setSubmitting(true);
     setError(null);
     try {
-      await createTask(input);
-      // Vuelve al listado; HomePage recarga las tareas al montarse.
+      await taskRepository.create(input);
       navigate('/');
     } catch {
       setError('No se pudo crear la tarea. Intenta de nuevo.');
