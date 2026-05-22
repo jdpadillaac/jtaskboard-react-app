@@ -1,10 +1,10 @@
-import { useState, type FormEvent } from 'react';
-import MarkdownEditor from './MarkdownEditor';
 import {
-  TITLE_MAX_LENGTH,
   DESCRIPTION_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   type NewTask,
 } from '@domain/task/task';
+import { useState, type FormEvent } from 'react';
+import MarkdownEditor from './MarkdownEditor';
 
 interface TaskFormProps {
   initialTitle?: string;
@@ -60,7 +60,7 @@ function TaskForm({
       <div className="field">
         <label>Descripcion</label>
         <MarkdownEditor
-          value={description}
+          initialValue={initialDescription}
           onChange={setDescription}
           readOnly={submitting}
         />

@@ -325,6 +325,7 @@
 .markdown-editor {
   width: 100%;
   max-width: 140ch;
+  min-width: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
@@ -340,6 +341,7 @@
 .markdown-editor .mdxeditor-toolbar {
   border-radius: 0;
   border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
 }
 
 .markdown-editor [contenteditable] {

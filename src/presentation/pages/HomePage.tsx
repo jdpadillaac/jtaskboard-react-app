@@ -1,14 +1,15 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import type { Task } from '@domain/task/task';
-import { useTasks } from '@presentation/hooks/useTasks';
-import TaskList from '@presentation/components/TaskList';
-import LoadingState from '@presentation/components/LoadingState';
-import ErrorState from '@presentation/components/ErrorState';
-import EmptyState from '@presentation/components/EmptyState';
 import ConfirmDialog from '@presentation/components/ConfirmDialog';
+import EmptyState from '@presentation/components/EmptyState';
+import ErrorState from '@presentation/components/ErrorState';
+import LoadingState from '@presentation/components/LoadingState';
+import TaskList from '@presentation/components/TaskList';
+import { useTasks } from '@presentation/hooks/useTasks';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function HomePage() {
+  const navigate = useNavigate();
   const { tasks, loading, error, refetch, deleteTask } = useTasks();
 
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
@@ -51,7 +52,11 @@ function HomePage() {
         {!loading && error && <ErrorState message={error} onRetry={refetch} />}
         {!loading && !error && tasks.length === 0 && <EmptyState />}
         {!loading && !error && tasks.length > 0 && (
-          <TaskList tasks={tasks} onDelete={setTaskToDelete} />
+          <TaskList
+            tasks={tasks}
+            onEdit={(task) => navigate('/tasks/edit', { state: { task } })}
+            onDelete={setTaskToDelete}
+          />
         )}
       </section>
 

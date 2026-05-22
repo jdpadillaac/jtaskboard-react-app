@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 // La pagina de creacion carga el editor Markdown (pesado): se separa en su
 // propio chunk para no afectar el peso inicial del listado.
 const CreateTaskPage = lazy(() => import('@presentation/pages/CreateTaskPage'));
+const EditTaskPage = lazy(() => import('@presentation/pages/EditTaskPage'));
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/tasks/new" element={<CreateTaskPage />} />
+        <Route path="/tasks/edit" element={<EditTaskPage />} />
       </Routes>
     </Suspense>
   );

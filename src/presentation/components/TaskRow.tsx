@@ -1,9 +1,10 @@
-import { Pencil, Trash2 } from 'lucide-react';
 import type { Task } from '@domain/task/task';
+import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 
 interface TaskRowProps {
   task: Task;
+  onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
 }
 
@@ -15,7 +16,7 @@ function formatDate(iso: string): string {
   });
 }
 
-function TaskRow({ task, onDelete }: TaskRowProps) {
+function TaskRow({ task, onEdit, onDelete }: TaskRowProps) {
   return (
     <tr>
       <td className="task-key">{task.taskKey}</td>
@@ -28,9 +29,9 @@ function TaskRow({ task, onDelete }: TaskRowProps) {
         <button
           type="button"
           className="icon-button"
-          disabled
+          onClick={() => onEdit(task)}
           aria-label="Editar tarea"
-          title="Edicion no disponible todavia"
+          title="Editar tarea"
         >
           <Pencil size={16} aria-hidden="true" />
         </button>
