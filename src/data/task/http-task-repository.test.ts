@@ -12,7 +12,7 @@ vi.mock('@data/http/http-client', () => ({
     },
 }));
 
-const client = httpClient as {
+const client = httpClient as unknown as {
     get: ReturnType<typeof vi.fn>;
     post: ReturnType<typeof vi.fn>;
     put: ReturnType<typeof vi.fn>;
