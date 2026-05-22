@@ -13,12 +13,13 @@ import TaskRow from './TaskRow';
 
 interface TaskListProps {
   tasks: Task[];
+  onOpen: (task: Task) => void;
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   onStatusChange: (task: Task, status: TaskStatus) => void;
 }
 
-function TaskList({ tasks, onEdit, onDelete, onStatusChange }: TaskListProps) {
+function TaskList({ tasks, onOpen, onEdit, onDelete, onStatusChange }: TaskListProps) {
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -29,6 +30,7 @@ function TaskList({ tasks, onEdit, onDelete, onStatusChange }: TaskListProps) {
           <TaskCard
             key={task.id}
             task={task}
+            onOpen={onOpen}
             onEdit={onEdit}
             onDelete={onDelete}
             onStatusChange={onStatusChange}
@@ -52,7 +54,7 @@ function TaskList({ tasks, onEdit, onDelete, onStatusChange }: TaskListProps) {
         </TableHead>
         <TableBody>
           {tasks.map((task) => (
-            <TaskRow key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} />
+            <TaskRow key={task.id} task={task} onOpen={onOpen} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} />
           ))}
         </TableBody>
       </Table>

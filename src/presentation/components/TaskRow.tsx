@@ -9,6 +9,7 @@ import StatusSelect from './StatusSelect';
 
 interface TaskRowProps {
   task: Task;
+  onOpen: (task: Task) => void;
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   onStatusChange: (task: Task, status: TaskStatus) => void;
@@ -22,16 +23,20 @@ function formatDate(iso: string): string {
   });
 }
 
-function TaskRow({ task, onEdit, onDelete, onStatusChange }: TaskRowProps) {
+function TaskRow({ task, onOpen, onEdit, onDelete, onStatusChange }: TaskRowProps) {
   return (
-    <TableRow hover>
+    <TableRow
+      hover
+      onClick={() => onOpen(task)}
+      sx={{ cursor: 'pointer' }}
+    >
       <TableCell>
         <Typography variant="body2" color="primary" sx={{ fontFamily: 'monospace' }}>
           {task.taskKey}
         </Typography>
       </TableCell>
       <TableCell>{task.title}</TableCell>
-      <TableCell>
+      <TableCell onClick={(e) => e.stopPropagation()}>
         <StatusSelect
           status={task.status}
           onChange={(status) => onStatusChange(task, status)}
@@ -42,7 +47,7 @@ function TaskRow({ task, onEdit, onDelete, onStatusChange }: TaskRowProps) {
           {formatDate(task.createdAt)}
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell onClick={(e) => e.stopPropagation()}>
         <IconButton
           size="small"
           onClick={() => onEdit(task)}

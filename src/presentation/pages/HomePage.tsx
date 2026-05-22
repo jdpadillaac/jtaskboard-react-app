@@ -12,6 +12,7 @@ import ConfirmDialog from '@presentation/components/ConfirmDialog';
 import EmptyState from '@presentation/components/EmptyState';
 import ErrorState from '@presentation/components/ErrorState';
 import LoadingState from '@presentation/components/LoadingState';
+import TaskDetailDialog from '@presentation/components/TaskDetailDialog';
 import TaskList from '@presentation/components/TaskList';
 import { useTasks } from '@presentation/hooks/useTasks';
 import { useEffect, useState } from 'react';
@@ -21,6 +22,7 @@ function HomePage() {
   const navigate = useNavigate();
   const { tasks, loading, error, refetch, deleteTask, updateTaskStatus } = useTasks();
 
+  const [taskToView, setTaskToView] = useState<Task | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -90,6 +92,7 @@ function HomePage() {
         {!loading && !error && tasks.length > 0 && (
           <TaskList
             tasks={tasks}
+            onOpen={setTaskToView}
             onEdit={(task) => navigate('/tasks/edit', { state: { task } })}
             onDelete={setTaskToDelete}
             onStatusChange={handleStatusChange}
@@ -114,6 +117,10 @@ function HomePage() {
           {statusError}
         </Alert>
       </Snackbar>
+
+      {taskToView && (
+        <TaskDetailDialog task={taskToView} onClose={() => setTaskToView(null)} />
+      )}
 
       {taskToDelete && (
         <ConfirmDialog

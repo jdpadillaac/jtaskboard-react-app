@@ -11,6 +11,7 @@ import StatusSelect from './StatusSelect';
 
 interface TaskCardProps {
     task: Task;
+    onOpen: (task: Task) => void;
     onEdit: (task: Task) => void;
     onDelete: (task: Task) => void;
     onStatusChange: (task: Task, status: TaskStatus) => void;
@@ -24,10 +25,13 @@ function formatDate(iso: string): string {
     });
 }
 
-function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardProps) {
+function TaskCard({ task, onOpen, onEdit, onDelete, onStatusChange }: TaskCardProps) {
     return (
         <Card variant="outlined">
-            <CardContent>
+            <CardContent
+                onClick={() => onOpen(task)}
+                sx={{ cursor: 'pointer' }}
+            >
                 <Stack spacing={1.5}>
                     <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Typography variant="body2" color="primary" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>
@@ -42,7 +46,11 @@ function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardProps) {
                         {task.title}
                     </Typography>
 
-                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Stack
+                        direction="row"
+                        sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <StatusSelect
                             status={task.status}
                             onChange={(status) => onStatusChange(task, status)}
