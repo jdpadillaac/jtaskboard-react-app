@@ -9,3 +9,12 @@ code {
   font-family: var(--mono);
   font-size: 0.9em;
 }
+
+/* Editor Markdown — responsive */
+.mdxeditor-toolbar {
+  flex-wrap: wrap;
+}
+
+.markdown-editor {
+  min-width: 0;
+}

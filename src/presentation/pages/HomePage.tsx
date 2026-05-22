@@ -61,8 +61,11 @@ function HomePage() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+    <Container maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        sx={{ justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'flex-start' }, mb: 4, gap: 2 }}
+      >
         <Box>
           <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
             JTaskboard
@@ -71,7 +74,11 @@ function HomePage() {
             Listado de tareas
           </Typography>
         </Box>
-        <Button variant="contained" onClick={() => navigate('/tasks/new')}>
+        <Button
+          variant="contained"
+          onClick={() => navigate('/tasks/new')}
+          sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' } }}
+        >
           + Crear tarea
         </Button>
       </Stack>

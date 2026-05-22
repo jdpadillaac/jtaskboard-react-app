@@ -82,13 +82,18 @@ function TaskForm({
 
         {error && <Alert severity="error" role="alert">{error}</Alert>}
 
-        <Stack direction="row" spacing={1} sx={{ justifyContent: 'flex-end' }}>
+        <Stack
+          direction={{ xs: 'column-reverse', sm: 'row' }}
+          spacing={1}
+          sx={{ justifyContent: 'flex-end' }}
+        >
           <Button
             type="button"
             variant="outlined"
             color="inherit"
             onClick={onCancel}
             disabled={submitting}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             Cancelar
           </Button>
@@ -96,6 +101,7 @@ function TaskForm({
             type="submit"
             variant="contained"
             disabled={!isValid || submitting}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             {submitting ? 'Guardando...' : submitLabel}
           </Button>

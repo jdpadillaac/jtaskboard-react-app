@@ -1,11 +1,14 @@
 import type { Task, TaskStatus } from '@domain/task/task';
+import { useMediaQuery, useTheme } from '@mui/material';
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TaskCard from './TaskCard';
 import TaskRow from './TaskRow';
 
 interface TaskListProps {
@@ -16,6 +19,25 @@ interface TaskListProps {
 }
 
 function TaskList({ tasks, onEdit, onDelete, onStatusChange }: TaskListProps) {
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down('sm'));
+
+  if (isCompact) {
+    return (
+      <Stack spacing={1.5}>
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onStatusChange={onStatusChange}
+          />
+        ))}
+      </Stack>
+    );
+  }
+
   return (
     <TableContainer component={Paper} variant="outlined">
       <Table>
